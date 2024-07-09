@@ -1,9 +1,10 @@
 steps:
-  # Step 1: Build the JAR file using Gradle
-  - name: 'gcr.io/cloud-builders/gradle'
+  # Step 1: Build the JAR file for service1 using Gradle
+  - name: gradle:7.6-jdk17
+    entrypoint: gradle
     args: [ 'build' ]
 
-  # Step 2: Build the Docker image for service2
+  # Step 2: Build the Docker image for service1
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'us-west2-docker.pkg.dev/cs5409kubernetes/kubernetes-docker-repo/service2:latest', '.']
 
