@@ -3,16 +3,12 @@ steps:
   - name: 'gcr.io/cloud-builders/gradle'
     args: [ 'build' ]
 
-  # Step 2: Build the Docker image
+  # Step 2: Build the Docker image for service2
   - name: 'gcr.io/cloud-builders/docker'
-    args: [ 'build', '-t', 'gcr.io/cs5409kubernetes/service2', '.' ]
-
-  # Step 3: Push the Docker image to Google Container Registry
-  - name: 'gcr.io/cloud-builders/docker'
-    args: [ 'push', 'gcr.io/cs5409kubernetes/service2' ]
+    args: ['build', '-t', 'us-west2-docker.pkg.dev/cs5409kubernetes/kubernetes-docker-repo/service2:latest', '.']
 
 options:
   logging: CLOUD_LOGGING_ONLY  # Use Google Cloud Logging
 
 images:
-  - 'gcr.io/cs5409kubernetes/service2'
+  - 'us-west2-docker.pkg.dev/cs5409kubernetes/kubernetes-docker-repo/service2:latest'
