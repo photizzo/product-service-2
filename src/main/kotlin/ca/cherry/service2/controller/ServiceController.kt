@@ -48,6 +48,13 @@ class ServiceController {
             val reader = BufferedReader(FileReader(file))
             val parser = CSVParser(reader, CSVFormat.DEFAULT.withHeader())
 
+            val headers = parser.headerMap.keys
+            val expectedHeaders = setOf("product", "amount")
+
+            if (headers != expectedHeaders) {
+                throw IOException("Input file not in CSV format.")
+            }
+
             var sum = 0
             for (record in parser) {
                 if (record.get("product") == product) {
@@ -57,8 +64,10 @@ class ServiceController {
 
             parser.close()
             return sum
-        } catch (e: Exception) {
+        } catch (e: IOException) {
             throw IOException("Input file not in CSV format.", e)
+        } catch (e: Exception) {
+            throw e
         }
     }
 }
