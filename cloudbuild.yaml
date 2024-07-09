@@ -5,8 +5,14 @@ steps:
 
   # Step 2: Build the Docker image
   - name: 'gcr.io/cloud-builders/docker'
-    script: |
-      docker build -t us-west2-docker.pkg.dev/cs5409kubernetes/kubernetes-docker-repo/service2:latest .
+    args: [ 'build', '-t', 'gcr.io/cs5409kubernetes/service2', '.' ]
+
+  # Step 3: Push the Docker image to Google Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'push', 'gcr.io/cs5409kubernetes/service2' ]
+
+options:
+  logging: CLOUD_LOGGING_ONLY  # Use Google Cloud Logging
 
 images:
-  - 'us-west2-docker.pkg.dev/cs5409kubernetes/kubernetes-docker-repo/service2:latest'
+  - 'gcr.io/cs5409kubernetes/service2'
