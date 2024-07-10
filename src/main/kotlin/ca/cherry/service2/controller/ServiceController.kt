@@ -65,7 +65,7 @@ class ServiceController {
                     continue
                 }
 
-                validateRecord(record)
+//                validateRecord(record)
                 if (record.get("product") == product) {
                     sum += record.get("amount").toInt()
                 }
