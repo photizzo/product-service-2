@@ -4,6 +4,7 @@ import ca.cherry.service2.model.Analytics
 import ca.cherry.service2.model.StorageConfig
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
+import org.apache.commons.csv.CSVRecord
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -49,14 +50,13 @@ class ServiceController {
             val parser = CSVParser(reader, CSVFormat.DEFAULT.withHeader())
 
             val headers = parser.headerMap.keys
-            val expectedHeaders = setOf("product", "amount")
-
-            if (headers != expectedHeaders) {
+            if (!headers.containsAll(listOf("product", "amount"))) {
                 throw IOException("Input file not in CSV format.")
             }
 
             var sum = 0
             for (record in parser) {
+                validateRecord(record)
                 if (record.get("product") == product) {
                     sum += record.get("amount").toInt()
                 }
@@ -68,6 +68,18 @@ class ServiceController {
             throw IOException("Input file not in CSV format.", e)
         } catch (e: Exception) {
             throw e
+        }
+    }
+
+    private fun validateRecord(record: CSVRecord) {
+        try {
+            val product = record.get("product")
+            val amount = record.get("amount").toInt()
+            if (product.isBlank() || amount < 0) {
+                throw IOException("Invalid record found in CSV file.")
+            }
+        } catch (e: Exception) {
+            throw IOException("Invalid record found in CSV file.")
         }
     }
 }
