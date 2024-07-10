@@ -60,6 +60,11 @@ class ServiceController {
 
             var sum = 0
             for (record in parser) {
+                // Skip the header-like line in the content
+                if (record.get("product") == "product" && record.get("amount") == "amount") {
+                    continue
+                }
+
                 validateRecord(record)
                 if (record.get("product") == product) {
                     sum += record.get("amount").toInt()
