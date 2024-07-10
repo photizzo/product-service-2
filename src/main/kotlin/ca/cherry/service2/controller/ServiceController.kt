@@ -31,16 +31,20 @@ class ServiceController {
         println("Processing file: $filePath")
 
         return try {
-            ResponseEntity.ok(Analytics.Response(
-                file = data.file,
-                sum = parseData(file, data.product)
-            ))
+            ResponseEntity.ok(
+                Analytics.Response(
+                    file = data.file,
+                    sum = parseData(file, data.product)
+                )
+            )
         } catch (e: Exception) {
             log.error("Exception2 occurred: ${e.message}")
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Analytics.Response(
-                file = data.file,
-                error = "Input file not in CSV format."
-            ))
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                Analytics.Response(
+                    file = data.file,
+                    error = "Input file not in CSV format."
+                )
+            )
         }
     }
 
@@ -50,7 +54,7 @@ class ServiceController {
             val parser = CSVParser(reader, CSVFormat.DEFAULT.withHeader())
 
             val headers = parser.headerMap.keys
-            if (!headers.containsAll(listOf("product", "amount"))) {
+            if (headers.size != 2 || !headers.contains("product") || !headers.contains("amount")) {
                 throw IOException("Input file not in CSV format.")
             }
 
@@ -72,14 +76,14 @@ class ServiceController {
     }
 
     private fun validateRecord(record: CSVRecord) {
+        if (record.size() != 2 || record.get("product").isNullOrBlank() || record.get("amount").isNullOrBlank()) {
+            throw IOException("Input file not in CSV format.")
+        }
         try {
-            val product = record.get("product")
-            val amount = record.get("amount").toInt()
-            if (product.isBlank() || amount < 0) {
-                throw IOException("Invalid record found in CSV file.")
-            }
-        } catch (e: Exception) {
-            throw IOException("Invalid record found in CSV file.")
+            record.get("amount").toInt()
+        } catch (e: NumberFormatException) {
+            throw IOException("Input file not in CSV format.")
         }
     }
+
 }
